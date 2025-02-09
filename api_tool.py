@@ -1,7 +1,11 @@
 import requests
 import csv
+from Bio import Entrez, SeqIO
 
-api_url = "https://phagesdb.org/api/"
+phagesdb_api_url = "https://phagesdb.org/api/"
+ncbi_base_url = "https://www.ncbi.nlm.nih.gov/nuccore/"
+Entrez.email = "jonahchecketts@gmail.com"
+Entrez.tool = "phage_host_specificity_analysis"
 
 while True:
     commands = input("Select Command. Type help for list of commands.\n").split(" ")
@@ -10,27 +14,22 @@ while True:
         print("quit - exit the program")
         print("cluster <name> <outfile> - get the genetic code of all phages in cluster <name> and output them as a csv to <outfile>")
     elif commands[0] == "cluster":
-        response = requests.get(api_url + "clusters/" + commands[1] + "/phagelist/", verify=False)
+        response = requests.get(phagesdb_api_url + "clusters/" + commands[1] + "/phagelist/", verify=False)
         results = response.json()['results']
-        phage_names = [i['phage_name'] for i in results]
-        phages_dna = {}
-        for name in phage_names:
-            response2 = requests.get(api_url + "genesbyphage/" + name + "/", verify=False)
-            results2 = response2.json()['results']
-            for result in results2:
-                phages_dna[result['GeneID']] = {'phage_name':name, 'gene_name': result['GeneID'], 'start': result['Start'], 'stop': result['Stop'], "protein": result['Translation']}
+        phage_access = {i["phage_name"] : i['genbank_accession'] for i in results}
         if ".csv" not in commands[2]:
             commands[2] += ".csv"
         with open(commands[2], "w", newline="") as f:
-            first = True
-            for key, values in phages_dna.items():
-                if (first):
-                    w = csv.DictWriter(f, values.keys())
-                    w.writeheader()
-                    first = False
-                w.writerow(values)             
+            w = csv.DictWriter(f, ["phage_name", "dna_sequence"])
+            w.writeheader()
+            for name, access in phage_access.items():
+                if access != "":
+                    try:
+                        stream = Entrez.efetch(db="nucleotide", id=access, rettype="fasta", retmode="text")
+                        phage_data = stream.read()
+                        values = {"phage_name" : name , "dna_sequence": phage_data}
+                        w.writerow(values)
+                    except:
+                        continue
     elif commands[0] == "quit":
         break
-
-    
-    
