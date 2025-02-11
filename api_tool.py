@@ -1,5 +1,4 @@
 import requests
-import csv
 from Bio import Entrez, SeqIO
 
 phagesdb_api_url = "https://phagesdb.org/api/"
@@ -17,18 +16,15 @@ while True:
         response = requests.get(phagesdb_api_url + "clusters/" + commands[1] + "/phagelist/", verify=False)
         results = response.json()['results']
         phage_access = {i["phage_name"] : i['genbank_accession'] for i in results}
-        if ".csv" not in commands[2]:
-            commands[2] += ".csv"
+        if ".fasta" not in commands[2]:
+            commands[2] += ".fasta"
         with open(commands[2], "w", newline="") as f:
-            w = csv.DictWriter(f, ["phage_name", "dna_sequence"])
-            w.writeheader()
             for name, access in phage_access.items():
                 if access != "":
                     try:
                         stream = Entrez.efetch(db="nucleotide", id=access, rettype="fasta", retmode="text")
                         phage_data = stream.read()
-                        values = {"phage_name" : name , "dna_sequence": phage_data}
-                        w.writerow(values)
+                        f.write(phage_data)
                     except:
                         continue
     elif commands[0] == "quit":
