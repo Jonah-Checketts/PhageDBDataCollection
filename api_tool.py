@@ -1,4 +1,6 @@
 import requests
+import csv
+import pprint
 from Bio import Entrez, SeqIO
 
 phagesdb_api_url = "https://phagesdb.org/api/"
@@ -27,5 +29,18 @@ while True:
                         f.write(phage_data)
                     except:
                         continue
+    elif commands[0] == "other_data":
+        response = requests.get(phagesdb_api_url + "clusters/" + commands[1] + "/phagelist/", verify=False)
+        results = response.json()['results']
+        if ".csv" not in commands[2]:
+            commands[2] += ".csv"
+        rows = []
+        with open(commands[2], "w") as f:
+            col_names = ["phage_name", "genbank_access_id", "GC_percent", "num_tRNAs", "fasta_url"]
+            writer = csv.DictWriter(f, fieldnames=col_names)
+            writer.writeheader()
+            for result in results:
+                rows.append({"phage_name": result['phage_name'], "genbank_access_id": result['genbank_accession'], "GC_percent": result['gcpercent'], "num_tRNAs": result['num_tRNAs'], "fasta_url": result['fasta_file']})
+            writer.writerows(rows)
     elif commands[0] == "quit":
         break
