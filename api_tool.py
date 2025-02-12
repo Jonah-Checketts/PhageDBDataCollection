@@ -35,7 +35,7 @@ while True:
         if ".csv" not in commands[2]:
             commands[2] += ".csv"
         rows = []
-        with open(commands[2], "w") as f:
+        with open(commands[2], "w", newline="") as f:
             col_names = ["phage_name", "genbank_access_id", "GC_percent", "num_tRNAs", "fasta_url"]
             writer = csv.DictWriter(f, fieldnames=col_names)
             writer.writeheader()
