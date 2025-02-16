@@ -11,7 +11,7 @@ Entrez.tool = "phage_host_specificity_analysis"
 while True:
     commands = input("Select Command. Type help for list of commands.\n").split(" ")
 
-    if commands[0] == "help":
+    if commands[0] == "help" or commands[0] == "h":
         print("quit - exit the program")
         print("cluster <name> <outfile> - get the genetic code of all phages in cluster <name> and output them as a csv to <outfile>")
     elif commands[0] == "cluster":
@@ -42,5 +42,5 @@ while True:
             for result in results:
                 rows.append({"phage_name": result['phage_name'], "genbank_access_id": result['genbank_accession'], "GC_percent": result['gcpercent'], "num_tRNAs": result['num_tRNAs'], "fasta_url": result['fasta_file']})
             writer.writerows(rows)
-    elif commands[0] == "quit":
+    elif commands[0] == "quit" or commands[0] == "q":
         break
