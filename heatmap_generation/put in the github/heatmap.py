@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load the dataset based on the provided file
-phage_host_df = pd.read_csv("C:/Users/LocalUser/Downloads/phage_host_data.csv")
+phage_host_df = pd.read_csv("heatmap_generation/put in the github/phage_host_data.csv")
 
 # Inspect the dataset to ensure column names are correct
 print("Dataset Columns:", phage_host_df.columns)
