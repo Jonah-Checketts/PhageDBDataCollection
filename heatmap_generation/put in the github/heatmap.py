@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.patches as mpatches
 
 # Load the dataset based on the provided file
-phage_host_df = pd.read_csv("/Users/blakemcgee/Desktop/heatmap/phage_host_data.csv")
+phage_host_df = pd.read_csv("heatmap_generation/put in the github/phage_host_data.csv")
 
 # Inspect the dataset to ensure column names are correct
 print("Dataset Columns:", phage_host_df.columns)
