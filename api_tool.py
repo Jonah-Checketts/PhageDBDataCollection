@@ -12,11 +12,7 @@ Entrez.tool = "phage_host_specificity_analysis"
 while True:
     commands = input("Select Command. Type help for list of commands.\n").split(" ")
 
-    if commands[0] == "help" or commands[0] == "h":
-        print("quit - exit the program")
-        print("cluster <name> <outfile> - get the genetic code of all phages in cluster <name> and output them as a csv to <outfile>.")
-        print("cluster_gb <name> - get the genbank file of all phages in cluster <name> and output the files into a folder named cluster_<name>_gb_files")
-    elif commands[0] == "cluster":
+    if commands[0] == "cluster":
         response = requests.get(phagesdb_api_url + "clusters/" + commands[1] + "/phagelist/", verify=False)
         results = response.json()['results']
         phage_access = {i["phage_name"] : i['genbank_accession'] for i in results}
@@ -61,5 +57,24 @@ while True:
             for result in results:
                 rows.append({"phage_name": result['phage_name'], "genbank_access_id": result['genbank_accession'], "GC_percent": result['gcpercent'], "num_tRNAs": result['num_tRNAs'], "fasta_url": result['fasta_file']})
             writer.writerows(rows)
+    elif commands[0] == "species_phages":
+        response = requests.get(phagesdb_api_url + "host_species/" + commands[1] + "/phagelist/", verify=False)
+        results = response.json()['results']
+        if ".csv" not in commands[2]:
+            commands[2] += ".csv"
+        rows = []
+        with open(commands[2], "w", newline="") as f:
+            col_names = ["phage_name", "GC_percent", "cluster"]
+            writer = csv.DictWriter(f, fieldnames=col_names)
+            writer.writeheader()
+            for result in results:
+                if result['gcpercent'] is not None:
+                    rows.append({"phage_name": result['phage_name'], "GC_percent": result['gcpercent'], "cluster": result['pcluster']['cluster']})
+            writer.writerows(rows)
     elif commands[0] == "quit" or commands[0] == "q":
         break
+    else:
+        print("quit - exit the program")
+        print("cluster <name> <outfile> - get the genetic code of all phages in cluster <name> and output them as a csv to <outfile>.")
+        print("cluster_gb <name> - get the genbank file of all phages in cluster <name> and output the files into a folder named cluster_<name>_gb_files")
+        print("species_phage <host_id> <outfile> - get information about all of the phages that infect a given host species specified by <host_id> stored in <outfile>")
