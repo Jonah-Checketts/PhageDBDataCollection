@@ -4,7 +4,7 @@ import os
 dir_name = "C:/Users/schec/Documents/GitHub/PhageDBDataCollection/bacteria_fastas"
 
 with open("streptomyces_csv_data.csv", "w", newline="") as out_f:
-    fieldnames = ['strain_name', 'gc_percent']
+    fieldnames = ['strain_name', 'gc_percent', "prot_seq"]
     writer = csv.DictWriter(out_f, fieldnames=fieldnames)
     writer.writeheader()
     csv_data = []
@@ -28,7 +28,4 @@ with open("streptomyces_csv_data.csv", "w", newline="") as out_f:
                 percent = gc_count / total_count
                 csv_data.append({'strain_name': bacteria_name, 'gc_percent': percent})
     writer.writerows(csv_data)
-
-
-
-                
+              

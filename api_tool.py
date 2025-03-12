@@ -3,6 +3,7 @@ import csv
 import pprint
 from Bio import Entrez, SeqIO
 import os
+import urllib
 
 phagesdb_api_url = "https://phagesdb.org/api/"
 ncbi_base_url = "https://www.ncbi.nlm.nih.gov/nuccore/"
@@ -20,12 +21,14 @@ while True:
             commands[2] += ".fasta"
         with open(commands[2], "w", newline="") as f:
             for name, access in phage_access.items():
+                print(name, access)
                 if access != "":
                     try:
-                        stream = Entrez.efetch(db="nucleotide", id=access, rettype="fasta", retmode="text")
+                        stream = Entrez.efetch(db="nucleotide", id=access, rettype="gb", retmode="text")
+                        record = SeqIO.read(stream, "genbank")
                         phage_data = stream.read()
                         print(phage_data)
-                        f.write(phage_data)
+                        #f.write(phage_data)
                         break
                     except:
                         continue
@@ -71,6 +74,23 @@ while True:
                 if result['gcpercent'] is not None:
                     rows.append({"phage_name": result['phage_name'], "GC_percent": result['gcpercent'], "cluster": result['pcluster']['cluster']})
             writer.writerows(rows)
+    elif commands[0] == "phages_gb":
+        response = requests.get(phagesdb_api_url + "host_species/" + commands[1] + "/phagelist/", verify=False)
+        results = response.json()['results']
+        for result in results:
+            if result['in_genbank']:
+                phage_name = result['phage_name']
+                host_name = result['isolation_host']['genus'] + "_" + result['isolation_host']['species']
+                if not os.path.isdir(result['isolation_host']['genus'] + "_phage_gb"):
+                    os.mkdir(result['isolation_host']['genus'] + "_phage_gb")
+                gb_access = result['genbank_accession']
+                try:
+                    stream = Entrez.efetch(db="nucleotide", id=gb_access, rettype="gb", retmode="text")
+                except:
+                    continue
+                phage_data = stream.read()
+                with open(result['isolation_host']['genus'] + "_phage_gb/" + phage_name + ".gb", "w") as f:
+                    f.write(phage_data)
     elif commands[0] == "quit" or commands[0] == "q":
         break
     else:
@@ -78,3 +98,4 @@ while True:
         print("cluster <name> <outfile> - get the genetic code of all phages in cluster <name> and output them as a csv to <outfile>.")
         print("cluster_gb <name> - get the genbank file of all phages in cluster <name> and output the files into a folder named cluster_<name>_gb_files")
         print("species_phage <host_id> <outfile> - get information about all of the phages that infect a given host species specified by <host_id> stored in <outfile>")
+        print("phages_gb <host_id> - get the genbank files for all phages that are known to infect host with id <host_id>")
