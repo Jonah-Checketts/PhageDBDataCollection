@@ -21,15 +21,11 @@ while True:
             commands[2] += ".fasta"
         with open(commands[2], "w", newline="") as f:
             for name, access in phage_access.items():
-                print(name, access)
                 if access != "":
                     try:
-                        stream = Entrez.efetch(db="nucleotide", id=access, rettype="gb", retmode="text")
-                        record = SeqIO.read(stream, "genbank")
+                        stream = Entrez.efetch(db="nucleotide", id=access, rettype="fasta", retmode="text")
                         phage_data = stream.read()
-                        print(phage_data)
-                        #f.write(phage_data)
-                        break
+                        f.write(phage_data)
                     except:
                         continue
     elif commands[0] == "cluster_gb":
@@ -75,7 +71,7 @@ while True:
                     rows.append({"phage_name": result['phage_name'], "GC_percent": result['gcpercent'], "cluster": result['pcluster']['cluster']})
             writer.writerows(rows)
     elif commands[0] == "phages_gb":
-        response = requests.get(phagesdb_api_url + "host_species/" + commands[1] + "/phagelist/", verify=False)
+        response = requests.get(phagesdb_api_url + "host_genera/" + commands[1] + "/phagelist/", verify=False)
         results = response.json()['results']
         for result in results:
             if result['in_genbank']:
