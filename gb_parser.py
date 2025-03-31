@@ -3,7 +3,7 @@ import os
 import mmap
 import pprint
 
-folder_name = "Streptomyces_Phage_gb"
+folder_name = "Streptomyces_phage_gb"
 fasta_file_name = "streptomyces_phage_proteins.fasta"
 pattern = '/translation="([A-Z\n\r\t ]+)"'
 

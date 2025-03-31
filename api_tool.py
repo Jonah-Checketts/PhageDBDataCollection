@@ -71,7 +71,7 @@ while True:
                     rows.append({"phage_name": result['phage_name'], "GC_percent": result['gcpercent'], "cluster": result['pcluster']['cluster']})
             writer.writerows(rows)
     elif commands[0] == "phages_gb":
-        response = requests.get(phagesdb_api_url + "host_genera/" + commands[1] + "/phagelist/", verify=False)
+        response = requests.get(phagesdb_api_url + "host_genera/" + commands[1] + "/phagelist?page_size=99999", verify=False)
         results = response.json()['results']
         for result in results:
             if result['in_genbank']:

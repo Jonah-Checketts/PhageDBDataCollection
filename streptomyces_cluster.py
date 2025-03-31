@@ -12,20 +12,20 @@ sns.set_style("whitegrid")
 # and cluster categories on the x-axis
 sns.stripplot(
     data=df,
-    x='cluster',
-    y='GC_percent',
-    palette='Set1',       # Choose a color palette
+    y='GC_percent',      # Choose a color palette
     dodge=True,           # Separate the points by hue in each category
     jitter=True,
     size=5
 )
 
+
+
 # Label the axes
-plt.xlabel("Cluster")
+plt.xlabel("Phage")
 plt.ylabel("GC Percent")
 
 # Optionally, give the plot a title
-plt.title("GC Percent by Cluster")
+plt.title("GC Percent of Streptomyces Phages")
 
 # Display the plot
 plt.show()
