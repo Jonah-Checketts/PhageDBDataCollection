@@ -18,8 +18,6 @@ sns.stripplot(
     size=5
 )
 
-
-
 # Label the axes
 plt.xlabel("Phage")
 plt.ylabel("GC Percent")
