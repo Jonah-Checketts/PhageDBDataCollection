@@ -1,5 +1,5 @@
 # PhageDBDataCollection
-A tool to request and store data from the PhagesDB online database.
+A tool to request phage-host relationship data from PhagesDB and NCBI online databases and analyze that data using several different tools.
 
 ## Re-Annotating the Phage Sequences
 The Phage coding sequences require a new, reannotation as the NCBI annotations are incorrect.
