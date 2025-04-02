@@ -16,7 +16,7 @@ for cluster in "$@"; do
   # 1) Fetch the FASTA for this cluster
   #    "api_tool.py cluster <clusterName> <outfile>"
   #    e.g. BD -> BD_raw.fasta
-  python ~/api_tool.py cluster "$cluster" "${cluster}_raw.fasta"
+  python ../api_tool.py cluster "$cluster" "${cluster}_raw.fasta"
   
   # 2) Run pharokka on the newly created FASTA
   ./run_pharokka_updated.bash "${cluster}_raw.fasta" "output_pharokka_${cluster}_cluster"
