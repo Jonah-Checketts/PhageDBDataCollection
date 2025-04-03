@@ -172,5 +172,5 @@ plt.ylabel("RSCU difference value")
 plt.legend()
 plt.savefig("scatterplot_RSCU_difference.png")
 
-df.to_csv('Multi_Cluster_df.csv', index=True)
-diff_df.to_csv('Difference_From_Streptomyces_Multi_Cluster_df.csv', index=True)
+#df.to_csv('Multi_Cluster_df.csv', index=True) #If you want just the RSCU values, use this
+diff_df.to_csv('RSCU_Difference_From_Bacteria_Multi_Cluster_df.csv', index=True) #If you want a comparison between a bacterial host and the phage clusters, use this
