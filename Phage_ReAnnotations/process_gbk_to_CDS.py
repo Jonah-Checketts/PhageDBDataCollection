@@ -36,8 +36,8 @@ if __name__ == '__main__':
 
     input_file = sys.argv[1]
 
-    # Instead of slicing the path at fixed positions, let’s parse the directory name.
-    # E.g., input_file might be:
+    #
+    # input_file might be:
     #   ./output_pharokka_P_cluster/pharokka.gbk
     # and the directory name "output_pharokka_P_cluster" includes your cluster name.
     dir_name = os.path.basename(os.path.dirname(input_file))
@@ -48,9 +48,9 @@ if __name__ == '__main__':
     if dir_name.startswith(prefix) and dir_name.endswith(suffix):
         cluster_name = dir_name[len(prefix):-len(suffix)]
     else:
-        # fallback if the pattern doesn't match what we expect
+        # fallback if the pattern doesn't match what we expect?
         cluster_name = "unknown"
 
-    output_dir = f"./cluster_{cluster_name}_cds"
+    output_dir = f"./Coding_Sequence_Data/cluster_{cluster_name}_cds"
 
     split_cds_by_phage(input_file, output_dir)

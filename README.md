@@ -10,6 +10,10 @@ All scripts for using Pharokka are in the **Phage_ReAnnotations** folder. Steps 
 3. This will run **run_clusters.bash** which runs **run_pharokka_updated** and **process_gbk_to_CDS** for each cluster. 
 4. The final output will be a folder with the CDS fasta files for each phage in a given cluster. These can then be used in other analyses (like Codon Usage Bias).
 
+Running this process on one cluster usually takes 4 hours long, so the 10 example clusters used in the analysis are avaliable in the following drive:
+[Coding Sequences Data](https://drive.google.com/drive/folders/1YSy4Ht9sVDazFc9X_gCZMCKSwuP4yqQR?usp=sharing)
+You will use these sequences for the Codon Usage Bias Analysis below:
+
 ## Running the Codon Usage Bias Analysis
-To run the Codon Usage Bias Analysis and generate a .csv file that contains the RSCU values for each codon in each specified phage cluster. The .csv file will be named **RSCU_Difference_From_Bacteria_Multi_Cluster_df.csv**. A .fasta file with the bacterial CDS of the host is needed and needs to be specified. There is an example Streptomyces.fasta file for this analysis, but it can be replaced.
+To run the Codon Usage Bias Analysis and generate a .csv file that contains the RSCU values for each codon in each specified phage cluster. The .csv file will be named **RSCU_Difference_From_Bacteria_Multi_Cluster_df.csv**. A .fasta file with the bacterial CDS of the host is needed and needs to be specified. There is an example Streptomyces.fasta file for this analysis, but it can be replaced by downloading the coding sequences for the selected bacteria.
 To run the analysis, use the **Calculating_RSCU_Values.py**. It requires command line arguments. The first argument should be the bacterial CDS fasta file, following by the bacterias GC% content. 

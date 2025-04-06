@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 from Bio import SeqIO
@@ -5,9 +7,6 @@ from collections import defaultdict
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-# Usage: python Calculating_RSCU_Values.py
-# Need to edit the script to actually identify clusters and bacteria folder 
 
 # Codon usage bias table:
 CODON_TABLE = {
@@ -29,148 +28,207 @@ CODON_TABLE = {
     'GGG': 'G'
 }
 
-def clean_cds(filepath): #This is specifically for the bacterial sequences which arent always in multiples of 3.
+def clean_cds(filepath):
+    """
+    For bacterial sequences which may not always be multiples of 3.
+    Removes invalid CDS from the file in-place.
+    """
     good, bad = [], []
-
     for rec in SeqIO.parse(filepath, "fasta"):
         if len(rec.seq) % 3 == 0:
             good.append(rec)
         else:
             bad.append(rec.id)
-
     SeqIO.write(good, filepath, "fasta")
     print(f"Removed {len(bad)} invalid CDS: {bad[:10]}")
 
-
 def Get_Synonymous_Codons(codon):
     count = 0
-    synonymous_acid = CODON_TABLE[codon]
-    for amino_acid in CODON_TABLE:
-        if CODON_TABLE[amino_acid] == synonymous_acid:
+    synonymous_aa = CODON_TABLE[codon]  # The amino acid for this codon
+    for c in CODON_TABLE:
+        if CODON_TABLE[c] == synonymous_aa:
             count += 1
     return count
 
 def Calculate_RSCU(codon_counts, amino_acid_counts):
     RSCU_data = {}
-    #Calculate RSCU    
-    #RSCU = (Observed count of codon) / (Total count of codons for the amino acid ÷ Number of synonymous codons)   
-    R_val = 0
+    # RSCU = (Observed codon count) / ( (Total codons for that AA) / (Number of synonymous codons for that AA) )
     for cd in CODON_TABLE:
-        R_val = codon_counts[cd] / (amino_acid_counts[CODON_TABLE[cd]] /  Get_Synonymous_Codons(cd))
-        #print(f"RSCU val for {cd}: {R_val}")
+        if amino_acid_counts[CODON_TABLE[cd]] == 0:
+            # Avoid division by zero if there's an amino acid never observed
+            RSCU_data[cd] = 0
+            continue
+        R_val = codon_counts[cd] / (
+            amino_acid_counts[CODON_TABLE[cd]] / Get_Synonymous_Codons(cd)
+        )
         RSCU_data[cd] = R_val
     return RSCU_data
 
-def Parse_CDS(cluster_folder):
-    #Parsing .fasta files for a given cluster. Each phage CDS is stored in its own .fasta files in the larger folder:
-    cluster_folder = os.fsencode(cluster_folder)
+def Parse_CDS(folder_or_file):
+    """
+    If given a folder, parses all .fasta inside it.
+    If given a single file, just parses that file.
+    Collects codon usage data and returns an RSCU dictionary.
+    """
     codon_counts = defaultdict(int)
     amino_acid_counts = defaultdict(int)
-        
-    for file in os.listdir(cluster_folder):
-        filename = os.fsdecode(file)
-        if not filename.endswith('.fasta'):
+
+    if os.path.isdir(folder_or_file):
+        # We'll parse every .fasta in the folder
+        for fname in os.listdir(folder_or_file):
+            if fname.endswith('.fasta'):
+                file_path = os.path.join(folder_or_file, fname)
+                #clean_cds(file_path)  # Optionally clean
+                with open(file_path, "r") as f:
+                    for record in SeqIO.parse(f, "fasta"):
+                        accumulate_codon_counts(record, codon_counts, amino_acid_counts)
+    else:
+        # It's a single file
+        #clean_cds(folder_or_file)  # Optionally clean
+        with open(folder_or_file, "r") as f:
+            for record in SeqIO.parse(f, "fasta"):
+                accumulate_codon_counts(record, codon_counts, amino_acid_counts)
+
+    return Calculate_RSCU(codon_counts, amino_acid_counts)
+
+def accumulate_codon_counts(record, codon_counts, amino_acid_counts):
+    """Helper to scan a sequence record in 3-nt windows."""
+    seq_len = len(record.seq)
+    if seq_len % 3 != 0:
+        # You could skip or raise an error
+        return
+    for i in range(0, seq_len, 3):
+        codon = str(record.seq[i:i+3]).upper()
+        # Skip stop codons
+        if codon in ("TGA","TAA","TAG"):
             continue
-        file_path = os.path.join(os.fsdecode(cluster_folder), filename)
-        #clean_cds(file_path)
-        for record in SeqIO.parse(file_path, "fasta"):
-            try:
-                if len(record.seq) % 3 != 0:
-                    raise ValueError("Not a multiple of 3 CDS, translation invalid.")
-                #print(len(record.seq)/3)
-                n = len(record.seq)
-                for window in range(0, n, 3):
-                    #Count the codons:
-                    codon = str(record.seq[window:window+3])
-                    if str(codon) in ("TGA", "TAA", "TAG"):
-                        continue
-                    codon_counts[codon] += 1
-                    amino_acid_counts[CODON_TABLE[codon]] += 1
+        codon_counts[codon] += 1
+        amino_acid_counts[CODON_TABLE[codon]] += 1
 
-            except ValueError as e:
-                print(e)
-    dat = Calculate_RSCU(codon_counts, amino_acid_counts)
-    return dat
+def main():
+    # -----------------------------
+    # 1) Ask user for bacterial info
+    # -----------------------------
+    bacteria_path = input("Enter the path to your bacterial sequence folder/file: ").strip()
+    bacteria_gc_str = input("Enter the GC% for the bacterial genome (e.g. 66.4): ").strip()
+    try:
+        bacteria_gc = float(bacteria_gc_str)
+    except ValueError:
+        bacteria_gc = None  # or default to something
 
-cluster_directories  = [
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_BD_cds", #Infects Streptomyces (exact species) : GC% = 66.4
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_BE_cds", #Infects Streptomyces (mixed) : GC% = 49.6
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_BI_cds", #Infects Streptomyces (mixed) : GC% = 59.6
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_AK_cds", #Infects Arthobacter : GC% = 61.1
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_AS_cds", #Infects Arthobacter : GC% = 66.7
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_CZ_cds", #Infects Gordonia : GC% = 66.4
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_DJ_cds", #Infects Gordonia : GC% = 51.5
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_P__cds", #Infects Mycobacterium : GC% = 67
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_AU_cds", #Infects Arthobacter : GC% = 50.3
-    "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/cluster_BU_cds" #Infects Propionibacterium : GC% = 54.1
-    
-]
-bacteria_direct = "/home/atkizen/Phage_Annotation/CodonUssageAnalyses/Bacterial_Sequences" #GC content = ~71%
+    # -----------------------------
+    # 2) Ask how many phage clusters
+    # -----------------------------
+    while True:
+        try:
+            num_clusters = int(input("How many phage clusters do you want to analyze? "))
+            break
+        except ValueError:
+            print("Please enter an integer.")
 
-data = []
-bacteria_RSCU = Parse_CDS(bacteria_direct) 
-data.append(bacteria_RSCU)
+    cluster_info = []
+    for i in range(num_clusters):
+        print(f"\n--- Cluster {i+1} ---")
+        c_path = input("Path to this cluster’s .fasta folder? ").strip()
+        c_gc_str = input("GC% for this cluster? (e.g. 59.6): ").strip()
+        c_name = input("Name of this cluster? (e.g. BD, BE, AK): ").strip()
+        try:
+            c_gc = float(c_gc_str)
+        except ValueError:
+            c_gc = None
+        cluster_info.append((c_path, c_gc, c_name))
 
-for d in cluster_directories:
-    print(f"Calculating RSCU for cluster {d[-6:]}")
-    #d is returned as a dictionary
-    data.append(Parse_CDS(d))
+    # -----------------------------
+    # 3) Parse the bacterial folder
+    # -----------------------------
+    print("\nCalculating RSCU for Bacteria...\n")
+    bacteria_RSCU = Parse_CDS(bacteria_path)
 
+    # Prepare data array (each entry is a dict of codon -> RSCU)
+    # We'll put the bacterial RSCU first
+    data = [bacteria_RSCU]
+    # Also track names for columns
+    col_names = [f"Bacteria (GC={bacteria_gc if bacteria_gc else 'unknown'})"]
 
+    # -----------------------------
+    # 4) Parse each cluster
+    # -----------------------------
+    for (p_path, p_gc, p_name) in cluster_info:
+        print(f"\nCalculating RSCU for cluster {p_name} (GC={p_gc})...")
+        cluster_RSCU = Parse_CDS(p_path)
+        data.append(cluster_RSCU)
+        if p_gc:
+            col_names.append(f"{p_name} (GC={p_gc})")
+        else:
+            col_names.append(p_name)
 
-# Plotting values as heatmap:
-df = pd.DataFrame.from_dict(data)
-df = df.T
-df.columns = ['Streptomyces', 'BD Cluster Phages', 'BE Cluster Phages', 'BI Cluster Phages', 'AK Cluster Phages', 'AS Cluster Phages', 'CZ Cluster Phages', 'DJ Cluster Phages', 'P Cluster Phages', 'AU Cluster Phages', 'BU Cluster phages']
-df = df.astype(float)
+    # -----------------------------
+    # 5) Create DataFrame & Heatmap
+    # -----------------------------
+    print("\nCreating RSCU DataFrame...")
+    df = pd.DataFrame.from_dict(data)
+    df = df.T  # So codons are rows, and each RSCU dictionary is a column
+    df.columns = col_names
+    df = df.astype(float)
+    print(df)
 
-print(df)
+    # Plot as a heatmap
+    plt.figure(figsize=(18, 18))
+    plt.imshow(df, interpolation='nearest', cmap='viridis', aspect='auto')
+    plt.colorbar()
+    plt.yticks(np.arange(len(df.index)), df.index, rotation=0)
+    plt.xticks(np.arange(df.shape[1]), df.columns, rotation=90)
+    plt.title("RSCU Heatmap")
+    plt.savefig("heatmap_RSCU.png")
+    plt.close()
 
-plt.figure(figsize=(18, 18))
-plt.imshow(df, interpolation='nearest', cmap='viridis', aspect='auto')
-plt.colorbar()
-plt.yticks(np.arange(len(df.index)), df.index, rotation=0)
-#plt.xticks([0, 1, 2, 3], ['Streptomyces', 'Cluster BD', 'Cluster BE', 'Cluster AK'])  
-plt.xticks(np.arange(df.shape[1]), df.columns, rotation=0)
-plt.title("RSCU Heatmap")
-plt.savefig("heatmatp_RSCU.png")
+    # -----------------------------
+    # 6) Compare each cluster vs. bacteria for differences
+    # -----------------------------
+    difference_data = {}
+    # data[0] is the bacterial RSCU
+    for i in range(1, len(data)):
+        cluster_col_name = col_names[i]
+        diff = {}
+        for codon in data[0]:
+            diff[codon] = abs(data[i][codon] - data[0][codon])
+        difference_data[cluster_col_name] = diff
 
+    diff_df = pd.DataFrame.from_dict(difference_data)
+    print("\nDifference DataFrame:\n", diff_df)
 
-#Comparing RSCU difference values and plotting on graph:
-difference_data = {}
-for i in range(1, len(data)):
-    diff = {}
-    for codon in data[0]:
-        diff[codon] = abs(data[i][codon] - data[0][codon])
-    difference_data[f"Cluster {cluster_directories[i-1][-6:]}"] = diff
-    
-diff_df = pd.DataFrame.from_dict(difference_data)
-print(diff_df)
-colors = list("rgbcmyk")
-x_array = np.array(range(len(diff_df.index)))
+    # Scatter plot with polynomial fit
+    x_array = np.arange(len(diff_df.index))
+    colors = list("rgbcmyk")
 
-plt.close('all')
-plt.figure(figsize=(16, 6))
-plt.rcParams.update({'font.size': 8})
+    plt.figure(figsize=(16, 6))
+    plt.rcParams.update({'font.size': 8})
 
-for i, cluster in enumerate(diff_df.columns):
-    y_array = diff_df[cluster].values
-    color = colors[i % len(colors)]
-    # Plot scatter and label only once per cluster.
-    plt.scatter(x_array, y_array, label=cluster, color=color)
-    # Smoothin a line 
-    coeffs = np.polyfit(x_array, y_array, deg=3)
-    poly_fn = np.poly1d(coeffs)
-    x_line = np.linspace(x_array.min(), x_array.max(), 100)
-    y_line = poly_fn(x_line)
-    # Plot the fitted line with the same color
-    plt.plot(x_line, y_line, linestyle='-', linewidth=2, color=color)
+    for i, cluster_col_name in enumerate(diff_df.columns):
+        y_array = diff_df[cluster_col_name].values
+        color = colors[i % len(colors)]
+        # Plot scatter
+        plt.scatter(x_array, y_array, label=cluster_col_name, color=color)
+        # Fit polynomial (for smoothing)
+        coeffs = np.polyfit(x_array, y_array, deg=3)
+        poly_fn = np.poly1d(coeffs)
+        x_line = np.linspace(x_array.min(), x_array.max(), 100)
+        y_line = poly_fn(x_line)
+        plt.plot(x_line, y_line, linestyle='-', linewidth=2, color=color)
 
-plt.xticks(x_array, diff_df.index, rotation=90)
-plt.xlabel("Codon")
-plt.ylabel("RSCU difference value")
-plt.legend()
-plt.savefig("scatterplot_RSCU_difference.png")
+    plt.xticks(x_array, diff_df.index, rotation=90)
+    plt.xlabel("Codon")
+    plt.ylabel("RSCU difference vs. Bacteria")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("scatterplot_RSCU_difference.png")
+    plt.close()
 
-#df.to_csv('Multi_Cluster_df.csv', index=True) #If you want just the RSCU values, use this
-diff_df.to_csv('RSCU_Difference_From_Bacteria_Multi_Cluster_df.csv', index=True) #If you want a comparison between a bacterial host and the phage clusters, use this
+    # If you want to save the frames:
+    # df.to_csv('Multi_Cluster_df.csv', index=True)
+    diff_df.to_csv('RSCU_Differences_vs_Bacteria.csv', index=True)
+
+    print("\nAll done! Plots and CSVs have been saved.\n")
+
+if __name__ == "__main__":
+    main()
