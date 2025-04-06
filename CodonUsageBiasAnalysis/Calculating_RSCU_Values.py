@@ -109,7 +109,7 @@ def main():
     # -----------------------------
     # 1) Ask user for bacterial info
     # -----------------------------
-    bacteria_path = input("Enter the path to your bacterial sequence folder/file: ").strip()
+    bacteria_path = input("Enter the path to your bacterial sequence folder/file: ").strip() 
     bacteria_gc_str = input("Enter the GC% for the bacterial genome (e.g. 66.4): ").strip()
     try:
         bacteria_gc = float(bacteria_gc_str)

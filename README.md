@@ -16,4 +16,24 @@ You will use these sequences for the Codon Usage Bias Analysis below:
 
 ## Running the Codon Usage Bias Analysis
 To run the Codon Usage Bias Analysis and generate a .csv file that contains the RSCU values for each codon in each specified phage cluster. The .csv file will be named **RSCU_Difference_From_Bacteria_Multi_Cluster_df.csv**. A .fasta file with the bacterial CDS of the host is needed and needs to be specified. There is an example Streptomyces.fasta file for this analysis, but it can be replaced by downloading the coding sequences for the selected bacteria.
-To run the analysis, use the **Calculating_RSCU_Values.py**. It requires command line arguments. The first argument should be the bacterial CDS fasta file, following by the bacterias GC% content. 
+To run the analysis, use the **Calculating_RSCU_Values.py**. It requires command line arguments. The first argument should be the bacterial CDS fasta file, following by the bacterias GC% content. Then you do the same for each phages.
+You can download and put the example Coding Sequences Data in the directory and use each clusters folder path. I.e. when the script runs, put in the folder path /CodonUsageBiasAnalysis/Coding_Sequences_Data/cluster_AK_cds with its GC content.
+<br>
+For the example files, each one has the following GC contents:
+* AK : 61.1
+* AS : 66.7
+* AU : 50.3
+* BD : 66.4
+* BE : 49.6
+* BI : 59.6
+* BU : 54.1
+* CZ : 66.4
+* DJ : 51.5
+* P : 67
+<br>
+Streptomyces bacteria has a GC content of 71.
+<br>
+The first script will create a .csv file called **RSCU_Differences_vs_Bacteria.csv**. The plotting script **Plotting_Scatterplot.py** will take this .csv file and plot a heatmap scatterplot of the RSCU values. When you run the script, it will ask you for the GC content of the host bacteria, and a list of which phages infect the host.
+<br> For the example data, the clusters "BD, BE, BI" infect the bacterial host Streptomyces.
+<br> Note: This generated plot is slightly different than the one on our poster presentation, as the clusters are sorted alphabetically instead of randomly.
+<br>The plotting script will generate a .png file called "scatterplot_RSCU_difference.png".
