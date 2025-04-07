@@ -11,7 +11,7 @@ Streptomyces azureus: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_00127002
 Streptomyces venezuelae: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_008639165.1/"
 Streptomyces coelicolor: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_008931305.1/"
 
-3. with the new file obtained in 3 and modified in 4, run "#Scatterplot.py"
+3. Now run "#Scatterplot.py". This .py file uses the new files that have been created in steps 1 and 2.
 4. Done, you can save the figure as a png if you want.
 
 
