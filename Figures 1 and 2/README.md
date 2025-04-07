@@ -5,23 +5,21 @@ Figure 1 (GC content scatterplot)
 Make sure file names are consistent with this guide:
 
 1. Use get_scatterplot_data.py on the command line "python get_scatterplot_data.py" when prompted for a command, put, "other_data BD phage_host_gc"
-2. I used the bacteria_tool.py in the "scripts" folder on github to generate the file "streptomyces_csv_data.csv". This file is already in the figure1 folder and the data folder for your convenience, but you can run bacteria_tool.py to get it yourself if you want.
-3. Run add_host_gc.py to take the data from "streptomyces_csv_data.csv" and add in the proper host gc data. you will get a new file: "phage_host_gc_full.csv"
-4. For three of the hosts, I had to manually add in the GC percents from NCBI. It is built into the add_host_gc.py file, but if you want to see where the data comes from here are the links:
+2. Run add_host_gc.py to take the data from "streptomyces_csv_data.csv" and add in the proper host gc data. you will get a new file: "phage_host_gc_full.csv". Note: I used the bacteria_tool.py in the "scripts" folder on github to generate the file "streptomyces_csv_data.csv". This file is already in the figure1 folder and the data folder for your convenience, but you can run bacteria_tool.py to get it yourself if you want. For three of the hosts, I had to manually add in the GC percents from NCBI. It is built into the add_host_gc.py file, but if you want to see where the data comes from here are the links:
 
 Streptomyces azureus: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_001270025.1/"
 Streptomyces venezuelae: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_008639165.1/"
 Streptomyces coelicolor: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_008931305.1/"
 
-5. with the new file obtained in 3 and modified in 4, run "#Scatterplot.py"
-6. Done, you can save the figure as a png if you want.
+3. with the new file obtained in 3 and modified in 4, run "#Scatterplot.py"
+4. Done, you can save the figure as a png if you want.
 
 
 Figure 2 (trees):
 
 Phage tree:
 1. Use api_tool.py on the command line "python api_tool.py" when prompted for a command, put, "cluster_gb BD". This will take a minute to fully download the files.
-2. With the resultant cluster_BD_gb_files folder in the same directory, run gb_parser.py file.
+2. With the resultant cluster_BD_gb_files folder in the same directory, run fig2_gb_parser.py file.
 3. With the "streptomyces_phage_proteins.fasta" that results from that, in the terminal run "mafft --auto streptomyces_phage_proteins.fasta > concatenated_aligned.fasta" You would need to have MAFFT installed before this, I did it on my mac using "brew install mafft"
 4. Install IQtree, I used "brew install iqtree". Then run the following command on the terminal using the "concatenated_aligned.fasta" file made from the MAFFT alignment in the previous step: "iqtree2 -s concatenated_aligned.fasta --alrt 1000 -B 1000 -T 4". Note: "iqtree2" will need to be replaced by the path to where you installed the iqtree2 Unix executable file. For me, it was found within the iqtree file that was installed with the following path "iqtree-2.3.6-macOS-arm/bin/iqtree2"
 5. Many files will be made from this. The one we care about is the ".treefile". It should be named "concatenated_aligned.fasta.treefile".  This takes about 15 minutes to run.
