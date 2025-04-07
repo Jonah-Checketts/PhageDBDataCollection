@@ -1,129 +1,120 @@
-import os
+#!/usr/bin/env python3
+
+import re
 import pandas as pd
 import numpy as np
-from matplotlib.colors import LinearSegmentedColormap, Normalize
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from matplotlib.colors import Normalize
 
-data = pd.read_csv('Difference_From_Streptomyces_Multi_Cluster_df.csv', index_col=0)
-data.columns = [col.replace("_cds", "") for col in data.columns]
-data.rename(columns={'Cluster P_': 'Cluster P'}, inplace=True)
-#print(data)
+def main():
+    # -------------------------------------------------------------------
+    # 1) Prompt the user
+    # -------------------------------------------------------------------
+    host_gc_str = input("Enter the host (bacteria) GC% (e.g. '71'): ").strip()
+    try:
+        host_gc = float(host_gc_str)
+    except ValueError:
+        print("Invalid GC% entered. Defaulting to 71.0")
+        host_gc = 71.0
 
-'''
-#Scatterplot grouping "infects streptomyces" vs "doesnt infect streptomyces"
-x_array = np.array(range(len(data.index)))
-plt.figure(figsize=(16, 6))
-plt.rcParams.update({'font.size': 8})
+    infect_str = input(
+        "Enter a comma-separated list of clusters that infect this host\n"
+        "(e.g. 'AK, AS, BD'): "
+    ).strip()
+    infecting_clusters = {s.strip() for s in infect_str.split(",") if s.strip()}
 
-for i, cluster in enumerate(data.columns):
-    #print(cluster)
-    y_array = data[cluster].values
-    if cluster in ("Cluster BD_cds", "Cluster BE_cds", "Cluster BI_cds"):
-        color = "r"
-    else:
-        color = "b"
-    #color = colors['red']
-    # Plot scatter and label only once per cluster.
-    #plt.scatter(x_array, y_array, label=cluster, color=color)
-    # Smoothin a line 
-    coeffs = np.polyfit(x_array, y_array, deg=3)
-    poly_fn = np.poly1d(coeffs)
-    x_line = np.linspace(x_array.min(), x_array.max(), 100)
-    y_line = poly_fn(x_line)
-    # Plot the fitted line with the same color. Comment it out to remove smoothed lines. To ONLY have smooth lines, comment out scatter above, and add "label = cluster" below
-    plt.plot(x_line, y_line, linestyle='-', linewidth=2, color=color, label = cluster)
+    # -------------------------------------------------------------------
+    # 2) Read the CSV
+    # -------------------------------------------------------------------
+    csv_file = "RSCU_Differences_vs_Bacteria.csv"
+    print(f"Reading difference data from {csv_file}...")
+    data = pd.read_csv(csv_file, index_col=0)
 
-plt.xticks(ticks=x_array, labels=data.index, rotation=90, ha='center')
-plt.xlabel("Codon")
-plt.ylabel("RSCU difference value")
-plt.legend()
-plt.savefig("scatterplot_RSCU_difference.png")
-'''
+    # -------------------------------------------------------------------
+    # 3) Parse each column name for cluster name + GC
+    #    Example: "AK (GC=61.1)"
+    # -------------------------------------------------------------------
+    pattern = re.compile(r"^(.+?)\s*\(GC\s*=\s*([\d\.]+)\)$")
 
-#Scatterplot heatmap for GC content
-#BD GC% = 66.4
-#BE GC% = 49.6
-#BI GC% = 59.6
-#AK GC% = 61.1
-#AS GC% = 66.7
-#CZ GC% = 66.4
-#DJ GC% = 51.5
-#P GC% = 67
-GC_dict = {"Cluster BD" : abs(66.4 - 71), "Cluster BE" : abs(49.6 - 71), "Cluster BI" : abs(59.6 - 71), "Cluster AK" : abs(61.1 - 71), 
-    "Cluster AS" : abs(66.7 - 71), "Cluster CZ" : abs(66.4 - 71), "Cluster DJ" : abs(51.5 - 71), "Cluster P" : abs(67 - 71), "Cluster AU" : abs(50.3 - 71), "Cluster BU" : abs(54.1 - 71)}
-norm = Normalize(vmin=2.5, vmax=25)
-cmap = plt.get_cmap("viridis_r")
-colors = [cmap(norm(v)) for v in GC_dict.values()]
-#GC Content Testing
-#plt.figure(figsize=(10, 6))
-#plt.scatter(range(len(GC_dict)), list(GC_dict.values()), color=colors, s=100)
-#plt.xticks(range(len(GC_dict)), list(GC_dict.keys()), rotation=45, ha='right')
-#plt.xlabel("Cluster")
-#plt.ylabel("GC Content")
-#plt.title("GC Content by Cluster")
-#lt.savefig("scatterplot_RSCU_difference.png")
+    cluster_names = {}
+    cluster_gcs = {}
 
-new_order = [
-    "Cluster BE",  # col1
-    "Cluster BU",  # col2
-    "Cluster AU",  # col3
-    "Cluster DJ",  # col4
-    "Cluster CZ",  # col5
-    "Cluster BI",  # col6
-    "Cluster AK",  # col7
-    "Cluster AS",  # col8
-    "Cluster P",  # col9
-    "Cluster BD"   # col10
-]
-# Reorder the DataFrame columns
-data = data[new_order]
+    for col in data.columns:
+        match = pattern.match(col)
+        if match:
+            c_name = match.group(1).strip()    
+            c_gc   = float(match.group(2))     
+        else:
+            c_name = col
+            c_gc   = 0.0
+        cluster_names[col] = c_name
+        cluster_gcs[col]   = c_gc
 
-x_array = np.array(range(len(data.index)))
+    # -------------------------------------------------------------------
+    # 4) Color each cluster by difference from host GC
+    #    Now from 2.5 to 25
+    # -------------------------------------------------------------------
+    norm = Normalize(vmin=2.5, vmax=25)
+    cmap = plt.get_cmap("viridis_r")
 
-plt.figure(figsize=(8.2, 5.7))
-plt.rcParams.update({'font.size': 10})
+    def cluster_color(col_name):
+        diff_gc = abs(cluster_gcs[col_name] - host_gc)
+        return cmap(norm(diff_gc))
 
-dashed_clusters = {"Cluster BU", "Cluster AU", "Cluster DJ", "Cluster CZ", "Cluster AK", "Cluster AS", "Cluster P"}
+    # -------------------------------------------------------------------
+    # 5) Plot
+    # -------------------------------------------------------------------
+    x_array = np.arange(len(data.index))
+    plt.figure(figsize=(10, 6))
+    plt.rcParams.update({'font.size': 9})
 
-for i, cluster in enumerate(data.columns):
-    #print(cluster)
-    y_array = data[cluster].values
-    gc_value = GC_dict.get(cluster, None)
-    if gc_value is not None:
-         color = cmap(norm(gc_value))
+    for col in data.columns:
+        y_array = data[col].values
+        color   = cluster_color(col)
 
-    #color = colors['red']
-    # Plot scatter and label only once per cluster.
-    plt.scatter(x_array, y_array, color=color, s = 12)
-    # Smoothin a line 
-    coeffs = np.polyfit(x_array, y_array, deg=3)
-    poly_fn = np.poly1d(coeffs)
-    x_line = np.linspace(x_array.min(), x_array.max(), 100)
-    y_line = poly_fn(x_line)
+        # Solid if in infecting_clusters, else dashed
+        c_name = cluster_names[col]
+        linestyle = '-' if c_name in infecting_clusters else ':'
 
-    linestyle = ':' if cluster in dashed_clusters else '-'
-    # Plot the fitted line with the same color. Comment it out to remove smoothed lines. To ONLY have smooth lines, comment out scatter above, and add "label = cluster" below
-    plt.plot(x_line, y_line, linestyle=linestyle, linewidth=2, color=color, label = cluster)
+        plt.scatter(x_array, y_array, color=color, s=10)
+        coeffs = np.polyfit(x_array, y_array, deg=3)
+        poly_fn = np.poly1d(coeffs)
+        x_line = np.linspace(x_array.min(), x_array.max(), 100)
+        y_line = poly_fn(x_line)
+        plt.plot(x_line, y_line, linestyle=linestyle, linewidth=2, color=color, label=col)
 
-plt.xticks(ticks=x_array, labels=data.index, rotation=90, ha='center', fontsize = 6)
-plt.xlabel("Codon")
-plt.ylabel("RSCU difference from Streptomyces")
-plt.legend()
+    plt.xticks(x_array, data.index, rotation=90, fontsize=6)
+    plt.xlabel("Codon")
+    plt.ylabel("RSCU Difference vs. Reference Bacteria")
+    plt.title("RSCU Differences Across Clusters")
 
-cluster_legend = plt.legend(title="Clusters", loc="upper left", fontsize = 7)
-plt.gca().add_artist(cluster_legend)  # keep the cluster legend on the plot
+    # -------------------------------------------------------------------
+    # 6) Legends
+    # -------------------------------------------------------------------
+    cluster_legend = plt.legend(title="Clusters", loc="upper left", fontsize=7)
+    plt.gca().add_artist(cluster_legend)
 
-solid_handle = Line2D([0], [0], color='gray', lw=2, linestyle='-', label='Solid Lines: Infects Streptomyces')
-dashed_handle = Line2D([0], [0], color='gray', lw=2, linestyle=':', label='Dashed lines: Does NOT infet Streptomyces')
-plt.legend(handles=[solid_handle, dashed_handle], title="Line Style Key", loc="upper right")
+    solid_handle = Line2D([0], [0], color='gray', lw=2, linestyle='-',
+                          label='Solid: Infects Host')
+    dashed_handle = Line2D([0], [0], color='gray', lw=2, linestyle=':',
+                           label="Dashed: Doesn't Infect Host")
+    plt.legend(handles=[solid_handle, dashed_handle],
+               title="Line Style Key", loc="upper right")
 
-plt.tight_layout(pad=1.0)  # padding adjustment
+    # -------------------------------------------------------------------
+    # 7) Colorbar
+    # -------------------------------------------------------------------
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=plt.gca(), pad=0.02)
+    cbar.set_label("GC% Difference vs. Host")
 
-ax = plt.gca()  # get current axes
-sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-sm.set_array([])  # required for the colorbar to work
-cbar = plt.colorbar(sm, ax=ax, pad=-.002)
-cbar.set_label("GC% Difference From Streptomyces")
+    plt.tight_layout()
+    plt.savefig("scatterplot_RSCU_difference.png")
+    plt.close()
 
-plt.savefig("scatterplot_RSCU_difference.png")
+    print("Plot saved to scatterplot_RSCU_difference.png")
+
+if __name__ == "__main__":
+    main()
