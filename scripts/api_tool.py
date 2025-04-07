@@ -95,5 +95,5 @@ while True:
         print("cluster_gb <name> - get the genbank file of all phages in cluster <name> and output the files into a folder named cluster_<name>_gb_files")
         print("species_phage <host_id> <outfile> - get information about all of the phages that infect a given host species specified by <host_id> stored in <outfile>")
         print("phages_gb <host_id> - get the genbank files for all phages that are known to infect host with id <host_id>")
-        print("other_data <cluster name> <outfile> - get phage name, genbank access id, GC percent, number of TRNAs, and fasta file url, for all phages in cluster <cluster_name>")
+        print("other_data <cluster name> <outfile> - get phage name, genbank access id, GC percent, number of TRNAs, and fasta file url, for all phages in cluster <cluster_name> stored in csv")
         print("To get cluster names, host ids, or other needed information please go to https://phagesdb.org/ to get that information")

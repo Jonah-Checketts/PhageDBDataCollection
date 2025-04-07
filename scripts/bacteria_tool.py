@@ -1,10 +1,10 @@
 import csv
 import os
 
-dir_name = "C:/Users/schec/Documents/GitHub/PhageDBDataCollection/data/bacteria_fastas"
+dir_name = "data/bacteria_fastas"
 
 with open("streptomyces_csv_data.csv", "w", newline="") as out_f:
-    fieldnames = ['strain_name', 'gc_percent', "prot_seq"]
+    fieldnames = ['strain_name', 'gc_percent']
     writer = csv.DictWriter(out_f, fieldnames=fieldnames)
     writer.writeheader()
     csv_data = []
@@ -21,7 +21,6 @@ with open("streptomyces_csv_data.csv", "w", newline="") as out_f:
                         bacteria_name = strain_info[0][1:] + " " + strain_info[1] + " " + strain_info[2]
                         first_line = False
                     else:
-                        line = line.strip().upper()
                         total_count += len(line)
                         gc_count += line.count("G")
                         gc_count += line.count("C")
