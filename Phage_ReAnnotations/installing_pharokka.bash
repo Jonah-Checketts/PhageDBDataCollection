@@ -33,6 +33,6 @@ if [ ! -f PHAROKKA_DB_READY ]; then
   echo "Downloading pharokka database. This will take a few minutes. Please be patient :)"
   time install_databases.py -o pharokka_db
   touch PHAROKKA_DB_READY
-fi
+#fi
 
 echo "Pharokka installation and database setup complete!"

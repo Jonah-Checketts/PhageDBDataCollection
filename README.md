@@ -20,11 +20,11 @@ This generates the GC content cluster plot James and Jonah used on their poster 
 ## Re-Annotating the Phage Sequences - Phage_ReAnnotations folder
 The Phage coding sequences require a new, reannotation as the NCBI annotations are incorrect.
 ## Re-Annotating the Phage Sequences
-Note: This analyis takes a LONG time, and so an example folder with the output is given below.
+Note: This analyis takes a LONG time, and so an example folder with the output is given in the **Coding Sequences Data** link. (For TA's, install that folder and skip the steps below.)
 <br>
 The Phage coding sequences require a new, reannotation as the NCBI annotations are incorrect. Some of our analyses require these reannotated coding sequences.
 <br>
-We used Pharokka v1.7.5 to conduct this analysis. PHold should be used in conjunction with Pharokka to ensure the most accurate annotations, but the analysis took too long to do both.
+We used Pharokka v1.7.5 to conduct this analysis. PHold should be used in conjunction with Pharokka to ensure the most accurate annotations, but the analysis took too long to do both. Pharokka has a large db it needs to run. **installing_pharokka.bash** needs to be ran to install both Pharokka and its db.
 <br>
 All scripts for using Pharokka are in the **Phage_ReAnnotations** folder. Steps for running the annotations on a list of given phage clusters:
 1. Get the names of each of your clusters (BD, BE, CZ, etc.)
