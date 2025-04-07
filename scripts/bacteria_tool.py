@@ -1,7 +1,7 @@
 import csv
 import os
 
-dir_name = "C:/Users/schec/Documents/GitHub/PhageDBDataCollection/bacteria_fastas"
+dir_name = "C:/Users/schec/Documents/GitHub/PhageDBDataCollection/data/bacteria_fastas"
 
 with open("streptomyces_csv_data.csv", "w", newline="") as out_f:
     fieldnames = ['strain_name', 'gc_percent', "prot_seq"]

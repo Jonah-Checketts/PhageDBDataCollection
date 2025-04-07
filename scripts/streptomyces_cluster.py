@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Read in your data
-df = pd.read_csv("streptomyces_phages.csv")
+df = pd.read_csv("data/streptomyces_phages.csv")
 
 # Set a clean style
 sns.set_style("whitegrid")
