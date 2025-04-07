@@ -1,0 +1,31 @@
+# phage_host.proteinortho.tsv statistics:
+# number of groups that contains at least p% species:
+# p	species	groups	genes in groups
+0%	0	3 (100%)	33 (100%)	
+50%	1	3 (100%)	33 (100%)	
+100%	2	3 (100%)	33 (100%)	
+# NOTE: p=100% correspond to the core proteome and p=0% to all groups
+# number of groups for each input species:
+streptomyces_phage_proteins.faa	3	100%
+streptomyces_proteins.faa	3	100%
+
+# ----------------------------------
+# graph file statistics:
+
+# The adjacency matrix, the number of edges between 2 species
+# file	streptomyces_phage_proteins.faa	streptomyces_proteins.faa	
+streptomyces_phage_proteins.faa	0	80
+streptomyces_proteins.faa	80	0
+
+# file	average number of edges
+streptomyces_phage_proteins.faa	40	
+streptomyces_proteins.faa	40	
+
+# The 2-path matrix, the number of paths between 2 species of length 2
+# file	streptomyces_phage_proteins.faa	streptomyces_proteins.faa	
+streptomyces_phage_proteins.faa(0)	6400	0
+streptomyces_proteins.faa(1)	0	6400
+
+# file	average number of 2-paths
+streptomyces_phage_proteins.faa(0)	3200
+streptomyces_proteins.faa(1)	3200
