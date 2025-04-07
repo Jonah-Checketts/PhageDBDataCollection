@@ -19,7 +19,7 @@ Figure 2 (trees):
 
 Phage tree:
 1. Use api_tool.py on the command line "python api_tool.py" when prompted for a command, put, "cluster_gb BD". This will take a minute to fully download the files.
-2. With the resultant cluster_BD_gb_files folder in the same directory, run gb_parser.py file.
+2. With the resultant cluster_BD_gb_files folder in the same directory, run fig2_gb_parser.py file.
 3. With the "streptomyces_phage_proteins.fasta" that results from that, in the terminal run "mafft --auto streptomyces_phage_proteins.fasta > concatenated_aligned.fasta" You would need to have MAFFT installed before this, I did it on my mac using "brew install mafft"
 4. Install IQtree, I used "brew install iqtree". Then run the following command on the terminal using the "concatenated_aligned.fasta" file made from the MAFFT alignment in the previous step: "iqtree2 -s concatenated_aligned.fasta --alrt 1000 -B 1000 -T 4". Note: "iqtree2" will need to be replaced by the path to where you installed the iqtree2 Unix executable file. For me, it was found within the iqtree file that was installed with the following path "iqtree-2.3.6-macOS-arm/bin/iqtree2"
 5. Many files will be made from this. The one we care about is the ".treefile". It should be named "concatenated_aligned.fasta.treefile".  This takes about 15 minutes to run.
