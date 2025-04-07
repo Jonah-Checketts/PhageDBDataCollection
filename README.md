@@ -82,7 +82,7 @@ Make sure file names are consistent with this guide.
 Figure 1 (GC content scatterplot)
 
 1. Use get_scatterplot_data.py on the command line "python get_scatterplot_data.py" when prompted for a command, put, "other_data BD phage_host_gc"
-2. Run add_host_gc.py to take the data from "streptomyces_csv_data.csv" and add in the proper host gc data. you will get a new file: "phage_host_gc_full.csv". Note: I used the bacteria_tool.py in the "scripts" folder on github to generate the file "streptomyces_csv_data.csv". This file is already in the figure1 folder and the data folder for your convenience, but you can run bacteria_tool.py to get it yourself if you want. For three of the hosts, I had to manually add in the GC percents from NCBI. It is built into the add_host_gc.py file, but if you want to see where the data comes from here are the links:
+2. On the command line, run "python add_host_gc.py" to take the data from "streptomyces_csv_data.csv" and add in the proper host gc data. you will get a new file: "phage_host_gc_full.csv". Note: I used the bacteria_tool.py in the "scripts" folder on github to generate the file "streptomyces_csv_data.csv". This file is already in the figure1 folder and the data folder for your convenience, but you can run bacteria_tool.py to get it yourself if you want. Also, for three of the hosts, I had to manually add in the GC percents from NCBI. It is built into the add_host_gc.py file, but if you want to see where the data comes from here are the links:
 
 Streptomyces azureus: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_001270025.1/"
 Streptomyces venezuelae: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_008639165.1/"
