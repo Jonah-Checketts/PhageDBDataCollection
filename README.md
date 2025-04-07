@@ -116,3 +116,15 @@ Bacteria Tree:
 7. The coloring and text annotations were done manually using the ITOL interface. 
 
 NOTE: There is a degree of randomness associated with iqtree, so the output may not be exactly the same as what is on the poster. This is to be expected. The general trends we discussed in our analysis will be consistent however.
+
+# Horizontal Gene Transfer Analysis
+## Data Gathering:
+1. Use api_tool.py with the command “phages_gb 4” to get a folder of all of the genbank files for streptomyces phages. A copy of the results for this command is in the data folder in the Streptomyces_phage_gb folder
+## Formatting Data:
+2. Run gb_parser.py file in the scripts directory. This file loops through all the genbank files in a directory and gets all of their proteins then turns them into a fasta file to work for protein Ortho. It is default set to the directories in the data folder that have all of the genbank files for both phages and bacteria.
+3. This script will create 2 new fasta files one that lists all of the phage proteins and one that lists all of the bacteria proteins. This can then be used with proteinOrtho to analyze protein similarity
+## Data Analysis:
+4. Follow the instructions at https://gitlab.com/paulklemm_PHD/proteinortho to install proteinOrtho. (ProteinOrtho doesn’t work on windows)
+5. Once you have installed proteinOrtho run the command “proteinortho -project=phage_host streptomyces_phage_proteins.faa streptomyces_proteins.faa” in the directory with the new fasta files
+6. This will compare the proteins in the two fasta files and find similar proteins. Our results can be found in the proteinOrthoResults/phage_host folder.
+7. I also ran proteinOrtho with 2 duplicates of the streptomyces_proteins.faa to compare all bacteria proteins with themself with the command “proteinortho -project=host_host streptomyces_proteins.faa streptomyces_proteins1.faa”. Results for this test can be found in the proteinOrthoResults/host_host folder.
