@@ -74,7 +74,7 @@ The first script will create a .csv file called **RSCU_Differences_vs_Bacteria.c
 
 
 # Reproducing Figure 1 and Figure 2
-Go into the file "Figures 1 and 2". The necessary files for each figure are in the folders "figure1" and figure2"
+Go into the file "Figures 1 and 2". The necessary files for each figure are in the folders "figure1" and "figure2"
 Make sure file names are consistent with this guide.
 
 Figure 1 (GC content scatterplot)
