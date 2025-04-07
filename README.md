@@ -38,7 +38,7 @@ Running this process on one cluster usually takes 4 hours long, so the 10 exampl
 <br>
 The host CDS is the *Streptomyces* folder. This folder is not from the analysis above, but is downloaded directly from NCBI (coding sequences genbank file).
 
-## Running the Codon Usage Bias Analysis - CodonUsageBiasAnalysis
+## Running the Codon Usage Bias Analysis - CodonUsageBiasAnalysis folder
 This analysis requires the reannotated coding sequences (see above). The example files are in the **Coding Sequences Data** folder from before.
 <br>
 To run the analysis, use the **Calculating_RSCU_Values.py**. It requires command line arguments. The first argument should be the bacterial CDS fasta file, following by the bacterias GC% content. Then you do the same for each phages.
