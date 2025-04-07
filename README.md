@@ -20,13 +20,14 @@ This generates the GC content cluster plot James and Jonah used on their poster 
 ## Re-Annotating the Phage Sequences - Phage_ReAnnotations folder
 The Phage coding sequences require a new, reannotation as the NCBI annotations are incorrect.
 ## Re-Annotating the Phage Sequences
-Note: This analyis takes a LONG time, and so an example folder with the output is given below.
+Note: This analyis takes a LONG time, and so an example folder with the output is given in the **Coding Sequences Data** link. (For TA's, install that folder and skip the steps below.)
 <br>
 The Phage coding sequences require a new, reannotation as the NCBI annotations are incorrect. Some of our analyses require these reannotated coding sequences.
 <br>
-We used Pharokka v1.7.5 to conduct this analysis. PHold should be used in conjunction with Pharokka to ensure the most accurate annotations, but the analysis took too long to do both.
+We used Pharokka v1.7.5 to conduct this analysis. PHold should be used in conjunction with Pharokka to ensure the most accurate annotations, but the analysis took too long to do both. Pharokka has a large db it needs to run. **installing_pharokka.bash** needs to be ran to install both Pharokka and its db.
 <br>
 All scripts for using Pharokka are in the **Phage_ReAnnotations** folder. Steps for running the annotations on a list of given phage clusters:
+
 1. Get the names of each of your clusters (BD, BE, CZ, etc.)
 2. Run **submit_pharokka.sh** with your clusters as arguments. Example: **submit_pharokka.sh BD BE P CZ**
 3. This will run **run_clusters.bash** which runs **run_pharokka_updated** and **process_gbk_to_CDS** for each cluster. 
@@ -47,7 +48,7 @@ That file can now be uploaded to the MEME software. To access the software onlin
 Now that MEME has been selected, you can upload the file where prompted in the top left. The other parameters can be left to their default setting. At the bottom click run analysis. Your results should appear in less than 10 minutes.
 
 
-## Running the Codon Usage Bias Analysis - CodonUsageBiasAnalysis folder
+## Running the Codon Usage Bias Analysis, RSCU Figure - CodonUsageBiasAnalysis folder
 This analysis requires the reannotated coding sequences (see above). The example files are in the **Coding Sequences Data** folder from before.
 <br>
 To run the analysis, use the **Calculating_RSCU_Values.py**. It requires command line arguments. The first argument should be the bacterial CDS fasta file, following by the bacterias GC% content. Then you do the same for each phages.
@@ -71,16 +72,17 @@ The first script will create a .csv file called **RSCU_Differences_vs_Bacteria.c
 <br> For the example data, the clusters "BD, BE, BI" infect the bacterial host Streptomyces.
 <br> Note: This generated plot is slightly different than the one on our poster presentation, as the clusters are sorted alphabetically instead of randomly.
 <br>The plotting script will generate a .png file called "scatterplot_RSCU_difference.png".
+<br>This gives a figure for codon usage bias.
 
 
 # Reproducing Figure 1 and Figure 2
-Go into the file "Figures 1 and 2". The necessary files for each figure are in the folders "figure1" and figure2"
+Go into the file "Figures 1 and 2". The necessary files for each figure are in the folders "figure1" and "figure2"
 Make sure file names are consistent with this guide.
 
 Figure 1 (GC content scatterplot)
 
 1. Use get_scatterplot_data.py on the command line "python get_scatterplot_data.py" when prompted for a command, put, "other_data BD phage_host_gc"
-2. Run add_host_gc.py to take the data from "streptomyces_csv_data.csv" and add in the proper host gc data. you will get a new file: "phage_host_gc_full.csv". Note: I used the bacteria_tool.py in the "scripts" folder on github to generate the file "streptomyces_csv_data.csv". This file is already in the figure1 folder and the data folder for your convenience, but you can run bacteria_tool.py to get it yourself if you want. For three of the hosts, I had to manually add in the GC percents from NCBI. It is built into the add_host_gc.py file, but if you want to see where the data comes from here are the links:
+2. On the command line, run "python add_host_gc.py" to take the data from "streptomyces_csv_data.csv" and add in the proper host gc data. you will get a new file: "phage_host_gc_full.csv". Note: I used the bacteria_tool.py in the "scripts" folder on github to generate the file "streptomyces_csv_data.csv". This file is already in the figure1 folder and the data folder for your convenience, but you can run bacteria_tool.py to get it yourself if you want. Also, for three of the hosts, I had to manually add in the GC percents from NCBI. It is built into the add_host_gc.py file, but if you want to see where the data comes from here are the links:
 
 Streptomyces azureus: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_001270025.1/"
 Streptomyces venezuelae: "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_008639165.1/"
