@@ -48,7 +48,7 @@ That file can now be uploaded to the MEME software. To access the software onlin
 Now that MEME has been selected, you can upload the file where prompted in the top left. The other parameters can be left to their default setting. At the bottom click run analysis. Your results should appear in less than 10 minutes.
 
 
-## Running the Codon Usage Bias Analysis - CodonUsageBiasAnalysis folder
+## Running the Codon Usage Bias Analysis, RSCU Figure - CodonUsageBiasAnalysis folder
 This analysis requires the reannotated coding sequences (see above). The example files are in the **Coding Sequences Data** folder from before.
 <br>
 To run the analysis, use the **Calculating_RSCU_Values.py**. It requires command line arguments. The first argument should be the bacterial CDS fasta file, following by the bacterias GC% content. Then you do the same for each phages.
@@ -72,6 +72,7 @@ The first script will create a .csv file called **RSCU_Differences_vs_Bacteria.c
 <br> For the example data, the clusters "BD, BE, BI" infect the bacterial host Streptomyces.
 <br> Note: This generated plot is slightly different than the one on our poster presentation, as the clusters are sorted alphabetically instead of randomly.
 <br>The plotting script will generate a .png file called "scatterplot_RSCU_difference.png".
+<br>This gives a figure for codon usage bias.
 
 
 # Reproducing Figure 1 and Figure 2
