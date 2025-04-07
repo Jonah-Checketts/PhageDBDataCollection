@@ -41,7 +41,7 @@ The host CDS is the *Streptomyces* folder. This folder is not from the analysis 
 ## Selection Pressure Analysis
 The selection pressure software MEME requires a fasta file with the coding sequence for the target gene for each phage. It also requires the stop codon to be deleted from the sequence. Once you have the correctly annotated sequences following the instructions above, we need to make a file that meets those requirements. <br>
 
-With the conference deadlines coming up, I manually opened each file, found the minor tail protein sequence, and copied the sequence to a new fasta file. After that file was built I manually delted the stop codon from the end of each sequence. I ended up with the file called "all_phages_minor_tail.fasta". To save you some time, that file is in the SelectionPressure folder. <br>
+With the conference deadlines coming up, I manually opened each file, found the minor tail protein sequence, and copied the sequence to a new fasta file. After that file was built I manually deleted the stop codon from the end of each sequence. I ended up with the file called "all_phages_minor_tail.fasta". To save you some time, that file is in the SelectionPressure folder. <br>
 
 That file can now be uploaded to the MEME software. To access the software online, go to datamonkey.org > Sites > Episodic > Meme
 Now that MEME has been selected, you can upload the file where prompted in the top left. The other parameters can be left to their default setting. At the bottom click run analysis. Your results should appear in less than 10 minutes.
