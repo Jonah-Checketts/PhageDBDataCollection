@@ -27,6 +27,7 @@ The Phage coding sequences require a new, reannotation as the NCBI annotations a
 We used Pharokka v1.7.5 to conduct this analysis. PHold should be used in conjunction with Pharokka to ensure the most accurate annotations, but the analysis took too long to do both. Pharokka has a large db it needs to run. **installing_pharokka.bash** needs to be ran to install both Pharokka and its db.
 <br>
 All scripts for using Pharokka are in the **Phage_ReAnnotations** folder. Steps for running the annotations on a list of given phage clusters:
+
 1. Get the names of each of your clusters (BD, BE, CZ, etc.)
 2. Run **submit_pharokka.sh** with your clusters as arguments. Example: **submit_pharokka.sh BD BE P CZ**
 3. This will run **run_clusters.bash** which runs **run_pharokka_updated** and **process_gbk_to_CDS** for each cluster. 
