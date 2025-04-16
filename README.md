@@ -107,7 +107,7 @@ NOTE: There is a degree of randomness associated with iqtree, so the output may 
 7. The coloring and text annotations were done manually using the ITOL interface.
 
 Bacteria Tree:
-1. Download the Streptomyces 16S rRNA fasta files using the NCBI links found in "16StRNA_Links.txt". Save all these files in their own folder, and make sure they all end in ".fasta"
+1. Download the Streptomyces 16S rRNA fasta files using the NCBI file identifiers found in "16StRNA_Links.txt". Go to NCBI genbank at "https://www.ncbi.nlm.nih.gov/genbank/", and enter the file identifiers associated with each each species. Save all these files in their own folder, and make sure they all end in ".fasta"
 2. Concatenate all the 16S rRNA files by going into their file and running "cat *.fasta > combine_bac.fasta"
 3. With the "combine_bac.fasta" that results from that, in the terminal run "mafft --auto combine_bac.fasta > concatenated_aligned.fasta"  You should already have MAFFT installed from the phage tree process.
 4. Install IQtree, I used "brew install iqtree". Then run the following command on the terminal using the "concatenated_aligned.fasta" file made from the MAFFT alignment in the previous step: iqtree2 -s concatenated_aligned.fasta --alrt 1000 -B 1000 -T 4. Note: "iqtree2" will need to be replaced by the path to where you installed the iqtree2 Unix executable file. For me, it was found within the iqtree file that was installed with the following path "iqtree-2.3.6-macOS-arm/bin/iqtree2"
