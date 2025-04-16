@@ -44,7 +44,7 @@ The selection pressure software MEME requires a fasta file with the coding seque
 
 With the conference deadlines coming up, I manually opened each file, found the minor tail protein sequence, and copied the sequence to a new fasta file. After that file was built I manually deleted the stop codon from the end of each sequence. I ended up with the file called "all_phages_minor_tail.fasta". To save you some time, that file is in the SelectionPressure folder. <br>
 
-That file can now be uploaded to the MEME software. To access the software online, go to datamonkey.org > Sites > Episodic > Meme
+That file can now be uploaded to the MEME software. To access the software online, go to datamonkey.org > Selection > Sites > Episodic > Meme
 Now that MEME has been selected, you can upload the file where prompted in the top left. The other parameters can be left to their default setting. At the bottom click run analysis. Your results should appear in less than 10 minutes.
 
 
