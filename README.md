@@ -47,6 +47,8 @@ With the conference deadlines coming up, I manually opened each file, found the 
 That file can now be uploaded to the MEME software. To access the software online, go to datamonkey.org > Selection > Sites > Episodic > Meme
 Now that MEME has been selected, you can upload the file where prompted in the top left. The other parameters can be left to their default setting. At the bottom click run analysis. Your results should appear in less than 10 minutes.
 
+The file produced can be downloaded and further analyzed, but that is out of the scope of this project. The information of interest can be found on the webpage. Set the p value to .001, scroll down to the table and click the letter q, NOT the letter p. Anything with a q value below .05 at that point is an area of interest (according to Dr. Pickett).
+
 
 ## Running the Codon Usage Bias Analysis, RSCU Figure - CodonUsageBiasAnalysis folder
 This analysis requires the reannotated coding sequences (see above). The example files are in the **Coding Sequences Data** folder from before.
